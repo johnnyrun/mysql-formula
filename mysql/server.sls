@@ -1,5 +1,5 @@
 include:
-  - mysql.config
+  #  - mysql.config
   - mysql.python
 
 {% from "mysql/defaults.yaml" import rawmap with context %}
@@ -69,7 +69,6 @@ mysql_install_datadir:
     - creates: /var/lib/mysql/mysql/user.frm
     - require:
       - pkg: mysqld
-      - file: mysql_config
     - require_in:
       - service: mysqld
 {% endif %}
@@ -86,18 +85,4 @@ mysqld:
     - enable: True
     - watch:
       - pkg: mysqld
-      - file: mysql_config
-{% if "config_directory" in mysql and "server_config" in mysql %}
-      - file: mysql_server_config
-{% endif %}
 
-# official oracle mysql repo
-# creates this file, that rewrites /etc/mysql/my.cnf setting
-# so, make it empty
-mysql_additional_config:
-  file.managed:
-    - name: /usr/my.cnf
-    - source: salt://mysql/files/usr-my.cnf
-    - create: False
-    - watch_in:
-      - service: mysqld
